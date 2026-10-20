@@ -1,0 +1,55 @@
+name: Build Augmenter
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install "PySide6==6.6.3" "Pillow==10.4.0" "imageio==2.33.1" "numpy<2" moviepy pyinstaller
+
+      - name: Generate icon
+        run: python assets/make_icon.py
+
+      - name: Build
+        run: pyinstaller Augmenter.spec --noconfirm
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Augmenter-Windows
+          path: dist/Augmenter/
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install "PySide6==6.6.3" "Pillow==10.4.0" "imageio==2.33.1" "numpy<2" moviepy pyinstaller
+
+      - name: Generate icon
+        run: python assets/make_icon.py
+
+      - name: Build
+        run: pyinstaller Augmenter.spec --noconfirm
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Augmenter-macOS
+          path: dist/Augmenter.app/
